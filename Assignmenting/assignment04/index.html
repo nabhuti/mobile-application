@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="bulma.min.css">
 
   <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.auth0.com/js/auth0/9.5.1/auth0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script defer="" src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src='https://api.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
 
@@ -20,7 +22,7 @@
 </head>
 
 <body>
-  <div id="test">
+  <div class="section" id="app">
     </p>
     <section class="section">
       <div class="container has-text-centered">
@@ -32,43 +34,45 @@
           <img src="transportation.jpg" alt="Trulli" width="300" height="233"><br>
         </div>
       </div>
-      <div class="container" style="margin-top: 2em">
-        <form class="form">
+
+        <form class="form" v-on:submit.prevent>
           <div class="field">
-            <div class="control">
-              <p>Username</p>
-              <input type="text" class="input" placeholder="username">
-            </div>
+            <label class="label">Username</label>
+            <input v-model="username" class="input" type="text" id="username" v-bind:class="{'is-danger':usernameErrorMessage}">
+            <ul>
+              <li v-for="error in usernameErrorMessage">
+                {{ error.msg }}
+                <span>{{new Date(error.date).toString()}}</span>
+              </li>
+            </ul>
           </div>
 
           <div class="field">
+            <label class="label">Password</label>
+            <input v-model="password" class="input" type="password" id="password" v-bind:class="{'is-danger':passwordErrorMessage}">
 
-            <div class="control">
-              <p>Password</p>
-              <input type="password" class="input" placeholder="Password">
-            </div>
+            <ul>
+              <li v-for="error in passwordErrorMessage">
+                {{ error.msg }}
+                <span>{{new Date(error.date).toString()}}</span>
+              </li>
+            </ul>
           </div>
-
         </form>
-
-
     </section>
-
-  </div>
   <div id="logins">
-    <div class="field is-grouped is-grouped-centered" style="margin-top: 2rem">
-      <div class="control">
-        <button class="button is-black" onclick="log();" style="padding-left: 4em; padding-right: 4em">Login</button>
-      </div>
+    <div class="field">
+      <button v-on:click="validate" class="buttont" type="submit">Login</button>
     </div>
-    <div class="field is-grouped is-grouped-centered" style="margin-top: 2em">
-      <div class="has-text-centered">
-        Don't have an account?
-        <br>
-        <span class="is-link"><u class="is-black">Sign up</u></span>
-      </div>
+
+    
+    <div>
+      Don't have an account?
+      <a href="">Register</a>
     </div>
   </div>
+  </div>
+
   <div class="field is-grouped is-grouped-centered" id="back" style="margin-top: 2rem">
     <div class="control">
       <button class="button is-black" onclick="backWards();" style="padding-left: 4em; padding-right: 4em">Back</button>
