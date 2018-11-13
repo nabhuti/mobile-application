@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Form Validation</title>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" >
+        <script src="https://cdn.auth0.com/js/auth0/9.5.1/auth0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+      </head>
+      <body>
+            <div class="field"> 
+            <h2>Form With Validation</h2><br>
+            </div>
+        <div class="section" id="app">
+            <form class ="form" v-on:submit.prevent>
+                <div class="field">
+                    <label class="label">Username</label>
+                    <input v-model="username" class="input" type="text" id="username" v-bind:class="{'is-danger':usernameErrorMessage}"> 
+                    <div class="has-text-danger" v-if="usernameError">{{usernameErrorMessage}}</div>
+                </div>
+
+                <div class="field"> 
+                    <label class="label">Password</label>     
+                    <input v-model="password"  class="input" type="password" id="password" v-bind:class="{'is-danger':passwordErrorMessage}" >
+                    <div  class="has-text-danger" v-if="passwordError">{{passwordErrorMessage}}</div>
+                    
+                  </div>
+
+                  <div class="field">       
+                    <button v-on:click="validate" class="buttont" id="btn-login"   type="submit">Login</button> 
+                  </div>
+                
+            </form>
+            <div>
+                Don't have an account?
+                <a href="">Register</a>
+            </div>
+
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
