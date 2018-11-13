@@ -42,6 +42,8 @@ var app = new Vue({
     }
 })
 document.getElementById('back').style.display = 'none'
+document.getElementById('journey-form').style.display = 'none'
+
 window.addEventListener('load', function() {
 
     var webAuth = new auth0.WebAuth({
@@ -71,9 +73,10 @@ window.addEventListener('load', function() {
 function loadMap() {
     document.getElementById('app').style.display = 'none'
     document.getElementById('logins').style.display = 'none'
-    
+    document.getElementById('journey-form').style.display = 'block'
     document.getElementById('back').style.display = 'block'
     document.getElementById('map-form').style.display = 'block'
+
     mapboxgl.accessToken = 'pk.eyJ1IjoidXdjbGVjdHVyZXIiLCJhIjoiY2ptdWJ6aWt1MGQ4aDN3bzhiM2V1dnRiYyJ9.lWYq773rwVmRzbyHcYAVHw'
     window.map = new mapboxgl.Map({
         container: 'map',
