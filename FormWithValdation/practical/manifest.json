@@ -1,0 +1,13 @@
+{
+    "name": "Assignment3",
+    "short_name": "transport",
+    "description": "transporting.",
+    "start_url": "/mobile-application/Assignment3/index.html",
+    "background_color": "#000000",
+    "theme_color": "#0f4a73",
+    "icons": [{
+      "src": "transportation.jpg",
+      "sizes": "256x256",
+      "type": "image/jpg"
+    }]
+  }

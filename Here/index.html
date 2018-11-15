@@ -1,0 +1,49 @@
+<html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bulma.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+</head>
+
+<body>
+  <div id="app">
+
+    <form class="form" v-on:submit.prevent>
+      <div class="field">
+        <div class="control">
+          <p>Enetr Address</p>
+          <input type="text" class="input" v-model="address">
+        </div>
+      </div>
+
+
+      <button v-on:click="search">Search</button>
+      <button v-on:click="find">find</button>
+
+    </form>
+    <div id="result_window" class="container">
+      <ul>
+        <li v-for="result in results" v-on:click="Klick(result)">
+          {{result.label}}
+        </li>
+      </ul>
+
+    </div>
+    <div id="geo_results" class="container">
+      <div v-for="result in geoResults" v-on:click="klick(result)">
+        {{result.Location.DisplayPosition}}
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
+
+</html>
