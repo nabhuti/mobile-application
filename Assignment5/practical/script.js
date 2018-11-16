@@ -1,4 +1,4 @@
-
+// https://leafletjs.com/reference-1.3.4.html#polyline
 var map = L.map('map').setView([-33.91, 18.41], 11)
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -7,6 +7,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const appId = 'BqU0U8dHPxCCYD9lLONy'
 const appCode = 'sEcZjhBTHp46SlRzts1ZMQ'
+const clientId = 'f99da0f2-7aed-4d6a-a64b-5a166c99bdd3'
+const clientSecret = 'fTV46ARkBaBb+nSNwmBWQm2Eum+I2ik+cBsq6Bsnwso='
 
 const autocompleteUrl = "http://autocomplete.geocoder.api.here.com/6.2/suggest.json" +
     "?app_id=" + appId +
@@ -19,6 +21,44 @@ const geocodeUrl = "https://geocoder.api.here.com/6.2/geocode.json" +
     "&searchtext="
 document.getElementById('map').style.display = 'none'
 document.getElementById('search').style.display = 'none'
+
+const tokenUrl = "https://identity.whereismytransport.com/connect/token"
+
+function login() {
+    var payload = {
+        'client_id': clientId,
+        'client_secret': clientSecret,
+        'grant_type': 'client_credentials',
+        'scope': 'transportapi:all'
+    }
+
+    var request = new XMLHttpRequest();
+    request.open('POST', 'https://identity.whereismytransport.com/connect/token', true);
+    request.addEventListener('load', function () {
+        if (this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            var token = response.access_token;
+            window.token = token;
+
+            localStorage.setItem('token', token)
+            localStorage.setItem('storageDate', Date.now().toLocaleString())
+        } else {
+            console.log("get token call failed")
+            alert('login unsuccessful')
+        }
+    });
+    request.setRequestHeader('Accept', 'application/json');
+    var formData = new FormData();
+
+    for (var key in payload) {
+        formData.append(key, payload[key]);
+    }
+
+    request.send(formData);
+}
+
+login()
+
 var app = new Vue({
     el: '#app',
     data: {
@@ -109,53 +149,59 @@ var app = new Vue({
                 })
         },
         search: function () {
-            // will connect to the whereismytransport api and get some results and do things with it.
-            //From whereismytransport developer page
-            var CLIENT_ID = 'f99da0f2-7aed-4d6a-a64b-5a166c99bdd3';
-            var CLIENT_SECRET = 'fTV46ARkBaBb+nSNwmBWQm2Eum+I2ik+cBsq6Bsnwso=';
-            var payload = {
-                'client_id': CLIENT_ID,
-                'client_secret': CLIENT_SECRET,
-                'grant_type': 'client_credentials',
-                'scope': 'transportapi:all'
-            };
-            var request = new XMLHttpRequest();
-            request.open('POST', 'https://identity.whereismytransport.com/connect/token', true);
-            request.addEventListener('load', function () {
-                var response = JSON.parse(this.responseText);
-                var token = response.access_token;
-                window.token = token;
 
-                if (this.status == 200) {
-                    localStorage.setItem('token', token)
-                    localStorage.setItem('storageDate', Date.now().toLocaleString())
 
-                } else {
-                    console.log("get token call failed")
-                }
-            });
-            request.setRequestHeader('Accept', 'application/json');
-            var formData = new FormData();
-
-            for (var key in payload) {
-                formData.append(key, payload[key]);
+            var journeyUrl = 'https://platform.whereismytransport.com/api/journeys'
+            var ourBody = {
+                "geometry": {
+                    "type": "MultiPoint",
+                    "coordinates": [
+                        [
+                            this.startLocation.Longitude,
+                            this.startLocation.Latitude
+                        ],
+                        [
+                            this.destinationLocation.Longitude,
+                            this.destinationLocation.Latitude
+                        ]
+                    ]
+                },
+                "maxItineraries": 5
             }
 
-            request.send(formData);
 
-            
-        },
-        getToken: function () {
-            var token = this.localStorage.getItem('token')
-            if(token == null || token == undefined || token == 'undefined') {
-                throw new Error("Invalid token")
-            } else {
-                return token
-            }
+            fetch(journeyUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + window.token,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(ourBody)
+            })
+                .then(function (response) {
+                    console.log(response)
+                    return response.json()
+                })
+                .then(function (response) {
+                    console.log(response)
+
+                    var itineraries = response.itineraries
+                    if (itineraries.length > 0) {
+                        var legs = itineraries[0].legs
+                        for (var i = 0; i < legs.length; i++) {
+                            console.log('geometry', legs[i].geometry.coordinates)
+                            var coorindates = legs[i].geometry.coordinates
+                          
+                            var polyline = L.polyline(coorindates, {color: 'red'}).addTo(map);
+                            map.fitBounds(polyline.getBounds()).location;
+                           // map.fitBounds(polyline.getBounds()).destinationLocation;
+                        }
+                    }
+                })
         }
-
-        
     }
+
 })
 
 
